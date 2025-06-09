@@ -8,7 +8,9 @@ import { Lock, User, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // API base URL
-const API_URL = 'https://cbss-backend.onrender.com';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'https://cbss-backend.onrender.com'
+  : 'http://localhost:5000';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -38,7 +40,6 @@ const AdminLogin = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
         body: JSON.stringify(formData)
       });
@@ -47,7 +48,7 @@ const AdminLogin = () => {
       const data = await response.json();
       console.log('Response data:', data);
 
-      if (response.ok) {
+      if (response.ok && data.token) {
         // Store the token
         localStorage.setItem('adminAuth', data.token);
         console.log('Token stored in localStorage');
@@ -57,9 +58,12 @@ const AdminLogin = () => {
           description: "Logged in successfully",
         });
 
-        // Redirect to admin dashboard
-        console.log('Redirecting to dashboard...');
-        navigate('/admin/dashboard');
+        // Small delay to ensure token is stored before redirect
+        setTimeout(() => {
+          // Redirect to admin dashboard
+          console.log('Redirecting to dashboard...');
+          navigate('/admin/dashboard', { replace: true });
+        }, 100);
       } else {
         console.error('Login failed:', data.message);
         toast({
@@ -72,7 +76,7 @@ const AdminLogin = () => {
       console.error('Login error:', error);
       toast({
         title: "Error",
-        description: "An error occurred during login. Please check if the backend server is running.",
+        description: "An error occurred during login. Please try again.",
         variant: "destructive",
       });
     } finally {
