@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('https://cbss-backend.onrender.com/api/auth/check', {
+        const response = await fetch('https://cbss-frontend.onrender.com/api/auth/check', {
           credentials: 'include'
         });
 

@@ -13,7 +13,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('https://cbss-backend.onrender.com/api/auth/logout', {
+      const response = await fetch('https://cbss-frontend.onrender.com/api/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });

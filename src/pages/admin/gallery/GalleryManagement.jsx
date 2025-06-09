@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlusCircle, Pencil, Trash, Image, Video, Calendar } from 'lucide-react';
 
 // API base URL
-const API_URL = 'https://cbss-backend.onrender.com';
+const API_URL = 'https://cbss-frontend.onrender.com';
 
 // Function to convert YouTube URL to embed URL
 const getYouTubeEmbedUrl = (url) => {

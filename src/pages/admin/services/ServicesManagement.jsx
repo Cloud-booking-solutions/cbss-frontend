@@ -66,7 +66,7 @@ const ServicesManagement = () => {
   const fetchServices = async () => {
     try {
       console.log('Fetching services...');
-      const response = await fetch('https://cbss-backend.onrender.com/api/service', {
+      const response = await fetch('https://cbss-frontend.onrender.com/api/service', {
         headers: getAuthHeaders(),
         credentials: 'include'
       });
@@ -171,7 +171,7 @@ const ServicesManagement = () => {
     console.log('Auth headers:', getAuthHeaders());
     
     try {
-      const response = await fetch('https://cbss-backend.onrender.com/api/service', {
+      const response = await fetch('https://cbss-frontend.onrender.com/api/service', {
         method: 'POST',
         headers: {
           ...getAuthHeaders(),
@@ -245,7 +245,7 @@ const ServicesManagement = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`https://cbss-backend.onrender.com/api/service/${id}`, {
+      const response = await fetch(`https://cbss-frontend.onrender.com/api/service/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
         credentials: 'include'
@@ -280,7 +280,7 @@ const ServicesManagement = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch(`https://cbss-backend.onrender.com/api/service/${editingService._id}`, {
+      const response = await fetch(`https://cbss-frontend.onrender.com/api/service/${editingService._id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         credentials: 'include',

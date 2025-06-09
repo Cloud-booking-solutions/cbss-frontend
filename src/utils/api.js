@@ -1,14 +1,15 @@
 import axios from 'axios';
 
-const API_URL = 'https://cbss-backend.onrender.com/api';
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://cbss-backend.onrender.com/api'
+  : 'https://cbss-frontend.onrender.com/api';
 
 // Create axios instance with base URL
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
-  },
-  withCredentials: true // Enable sending cookies with requests
+  }
 });
 
 // Add request interceptor to add auth token
@@ -16,23 +17,30 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('adminAuth');
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Authorization'] = `Bearer ${token}`;
+      console.log('Adding token to request:', config.url);
+    } else {
+      console.log('No token found for request:', config.url);
     }
     return config;
   },
   (error) => {
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
 
 // Add response interceptor to handle auth errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Response received for:', response.config.url);
+    return response;
+  },
   (error) => {
+    console.error('API Error:', error.response?.data || error.message);
     if (error.response?.status === 401) {
-      // Clear invalid token
+      console.log('Unauthorized request detected, clearing token');
       localStorage.removeItem('adminAuth');
-      // Redirect to login page
       window.location.href = '/admin/login';
     }
     return Promise.reject(error);

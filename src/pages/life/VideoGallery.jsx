@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
 
-const API_URL = 'https://cbss-backend.onrender.com';
+const API_URL = 'https://cbss-frontend.onrender.com';
 
 const VideoGallery = () => {
   const [videos, setVideos] = useState([]);

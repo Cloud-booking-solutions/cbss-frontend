@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import CEO from "./pages/founder/CEO";
@@ -25,7 +25,7 @@ import Blogs from "./pages/career/Blogs";
 import BlogDetail from "./pages/career/BlogDetail";
 import CareerOptions from "./pages/career/CareerOptions";
 import Contact from "./pages/Contact";
-import Login from "./pages/admin/Login";
+import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/Dashboard";
 import GalleryManagement from "./pages/admin/gallery/GalleryManagement";
 import CareerManagement from "./pages/admin/career/CareerManagement";
@@ -45,6 +45,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/founder/ceo" element={<CEO />} />
@@ -67,49 +68,59 @@ const App = () => (
           <Route path="/career/blogs/:id" element={<BlogDetail />} />
           <Route path="/career/options" element={<CareerOptions />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/admin/login" element={<Login />} />
-          <Route path="/admin/dashboard" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AdminDashboard />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/gallery" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <GalleryManagement />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/blog" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <BlogManagement />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/career" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <CareerManagement />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/services" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <ServicesManagement />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/team" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <TeamManagement />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
+          
+          {/* Admin Routes */}
+          <Route path="/admin">
+            <Route path="login" element={<AdminLogin />} />
+            <Route path="dashboard" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="gallery" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <GalleryManagement />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="blog" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <BlogManagement />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="career" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <CareerManagement />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="services" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <ServicesManagement />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="team" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <TeamManagement />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+            {/* Redirect /admin to /admin/dashboard */}
+            <Route index element={
+              <Navigate to="/admin/dashboard" replace />
+            } />
+          </Route>
+
+          {/* 404 Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
