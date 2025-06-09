@@ -8,7 +8,7 @@ import { Lock, User, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // API base URL
-const API_URL = 'https://cbss-backend.onrender.com';
+const API_URL = 'http://localhost:5000';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({

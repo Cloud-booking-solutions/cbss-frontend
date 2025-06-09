@@ -25,7 +25,7 @@ import Blogs from "./pages/career/Blogs";
 import BlogDetail from "./pages/career/BlogDetail";
 import CareerOptions from "./pages/career/CareerOptions";
 import Contact from "./pages/Contact";
-import Login from "./pages/admin/Login";
+import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/Dashboard";
 import GalleryManagement from "./pages/admin/gallery/GalleryManagement";
 import CareerManagement from "./pages/admin/career/CareerManagement";
@@ -67,7 +67,7 @@ const App = () => (
           <Route path="/career/blogs/:id" element={<BlogDetail />} />
           <Route path="/career/options" element={<CareerOptions />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={
             <ProtectedRoute>
               <AdminLayout>
