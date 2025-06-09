@@ -23,7 +23,7 @@ const GalleryManagement = () => {
 
   const fetchGalleryItems = async () => {
     try {
-      const response = await fetch('https://cbss-frontend.onrender.com/api/gallery', {
+      const response = await fetch('https://cbss-backend.onrender.com/api/gallery', {
         credentials: 'include'
       });
       if (response.ok) {
@@ -41,7 +41,7 @@ const GalleryManagement = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`https://cbss-frontend.onrender.com/api/gallery/${id}`, {
+      const response = await fetch(`https://cbss-backend.onrender.com/api/gallery/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });

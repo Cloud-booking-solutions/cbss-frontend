@@ -25,7 +25,7 @@ const ServicesManagement = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await fetch('https://cbss-frontend.onrender.com/api/services', {
+      const response = await fetch('https://cbss-backend.onrender.com/api/services', {
         credentials: 'include'
       });
       if (response.ok) {
@@ -43,7 +43,7 @@ const ServicesManagement = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`https://cbss-frontend.onrender.com/api/services/${id}`, {
+      const response = await fetch(`https://cbss-backend.onrender.com/api/services/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });

@@ -10,7 +10,7 @@
 
 //   const fetchTeamMembers = async () => {
 //     try {
-//       const response = await fetch('https://cbss-frontend.onrender.com/api/team');
+//       const response = await fetch('https://cbss-backend.onrender.com/api/team');
 //       if (response.ok) {
 //         const data = await response.json();
 //         setTeamMembers(data);

@@ -23,7 +23,7 @@ const CareerManagement = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch('https://cbss-frontend.onrender.com/api/career', {
+      const response = await fetch('https://cbss-backend.onrender.com/api/career', {
         credentials: 'include'
       });
       if (response.ok) {
@@ -41,7 +41,7 @@ const CareerManagement = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`https://cbss-frontend.onrender.com/api/career/${id}`, {
+      const response = await fetch(`https://cbss-backend.onrender.com/api/career/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });

@@ -43,7 +43,7 @@ const CareerManagement = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch('https://cbss-frontend.onrender.com/api/career', {
+      const response = await fetch('https://cbss-backend.onrender.com/api/career', {
         headers: getAuthHeaders(),
         credentials: 'include'
       });
@@ -86,7 +86,7 @@ const CareerManagement = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch('https://cbss-frontend.onrender.com/api/career', {
+      const response = await fetch('https://cbss-backend.onrender.com/api/career', {
         method: 'POST',
         headers: getAuthHeaders(),
         credentials: 'include',
@@ -128,7 +128,7 @@ const CareerManagement = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`https://cbss-frontend.onrender.com/api/career/${id}`, {
+      const response = await fetch(`https://cbss-backend.onrender.com/api/career/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
         credentials: 'include'
@@ -160,7 +160,7 @@ const CareerManagement = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch(`https://cbss-frontend.onrender.com/api/career/${editingJob._id}`, {
+      const response = await fetch(`https://cbss-backend.onrender.com/api/career/${editingJob._id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         credentials: 'include',

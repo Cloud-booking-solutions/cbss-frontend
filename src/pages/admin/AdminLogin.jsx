@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 // API base URL
 const API_URL = process.env.NODE_ENV === 'production'
   ? 'https://cbss-backend.onrender.com'
-  : 'https://cbss-frontend.onrender.com';
+  : 'http://localhost:5000';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({

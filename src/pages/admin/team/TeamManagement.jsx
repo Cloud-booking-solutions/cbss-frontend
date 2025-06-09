@@ -46,7 +46,7 @@ const TeamManagement = () => {
 
   const fetchTeamMembers = async () => {
     try {
-      const response = await fetch('https://cbss-frontend.onrender.com/api/team', {
+      const response = await fetch('https://cbss-backend.onrender.com/api/team', {
         headers: getAuthHeaders(),
         credentials: 'include'
       });
@@ -87,7 +87,7 @@ const TeamManagement = () => {
         type: activeTab // Use the active tab as the member type
       };
 
-      const response = await fetch('https://cbss-frontend.onrender.com/api/team', {
+      const response = await fetch('https://cbss-backend.onrender.com/api/team', {
         method: 'POST',
         headers: getAuthHeaders(),
         credentials: 'include',
@@ -121,7 +121,7 @@ const TeamManagement = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`https://cbss-frontend.onrender.com/api/team/${id}`, {
+      const response = await fetch(`https://cbss-backend.onrender.com/api/team/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
         credentials: 'include'
@@ -154,7 +154,7 @@ const TeamManagement = () => {
         type: editingMember.type // Preserve the original member type
       };
 
-      const response = await fetch(`https://cbss-frontend.onrender.com/api/team/${editingMember._id}`, {
+      const response = await fetch(`https://cbss-backend.onrender.com/api/team/${editingMember._id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         credentials: 'include',

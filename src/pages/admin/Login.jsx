@@ -18,7 +18,7 @@ const Login = () => {
 
     try {
       console.log('Attempting login with:', { username });
-      const response = await fetch('https://cbss-frontend.onrender.com/api/auth/login', {
+      const response = await fetch('https://cbss-backend.onrender.com/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

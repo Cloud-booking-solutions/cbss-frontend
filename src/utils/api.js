@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production' 
   ? 'https://cbss-backend.onrender.com/api'
-  : 'https://cbss-frontend.onrender.com/api';
+  : 'https://cbss-backend.onrender.com/api';
 
 // Create axios instance with base URL
 const api = axios.create({

@@ -13,7 +13,7 @@ const CareerOptions = () => {
 
   const fetchCareerOptions = async () => {
     try {
-      const response = await fetch('https://cbss-frontend.onrender.com/api/career');
+      const response = await fetch('https://cbss-backend.onrender.com/api/career');
       if (!response.ok) {
         throw new Error('Failed to fetch career options');
       }
