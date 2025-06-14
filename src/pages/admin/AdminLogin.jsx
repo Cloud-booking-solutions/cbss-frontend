@@ -145,6 +145,11 @@ const AdminLogin = () => {
             <p className="text-sm text-blue-600">Username: admin</p>
             <p className="text-sm text-blue-600">Password: cloudbooking2024</p>
           </div> */}
+
+      {/* 
+            we are hiding the password bcoz nobody should the passwords
+      */}
+      
         </CardContent>
       </Card>
     </div>
