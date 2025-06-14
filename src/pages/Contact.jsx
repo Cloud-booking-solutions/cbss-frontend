@@ -1,4 +1,3 @@
-
 import Layout from '../components/Layout';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 
@@ -25,8 +24,18 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">Phone</h3>
-                  <p className="text-gray-600">+91 8692805267</p>
-                  <p className="text-gray-600">+91 9860302372</p>
+                  <a 
+                    href="tel:+918692805267" 
+                    className="text-gray-600 hover:text-primary-600 transition-colors block"
+                  >
+                    +91 8692805267
+                  </a>
+                  <a 
+                    href="tel:+919860302372" 
+                    className="text-gray-600 hover:text-primary-600 transition-colors block"
+                  >
+                    +91 9860302372
+                  </a>
                 </div>
               </div>
 
@@ -36,7 +45,14 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">Email</h3>
-                  <p className="text-gray-600">cloudbookingsolutions@gmail.com</p>
+                  <a 
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=cloudbookingsolutions@gmail.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-primary-600 transition-colors"
+                  >
+                    cloudbookingsolutions@gmail.com
+                  </a>
                 </div>
               </div>
 
@@ -46,8 +62,14 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">Address</h3>
-                  <p className="text-gray-600">Gate No:02, D4 Building, Sakal Nagar, Aundh, Pune-411007</p>
-                  
+                  <a 
+                    href="https://www.google.com/maps/search/?api=1&query=Gate+No:02,+D4+Building,+Sakal+Nagar,+Aundh,+Pune-411007"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-primary-600 transition-colors"
+                  >
+                    Gate No:02, D4 Building, Sakal Nagar, Aundh, Pune-411007
+                  </a>
                 </div>
               </div>
 

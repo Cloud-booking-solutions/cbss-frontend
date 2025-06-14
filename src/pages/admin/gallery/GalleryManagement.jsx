@@ -49,12 +49,14 @@ const GalleryManagement = () => {
     title: '',
     description: '',
     url: '',
-    type: 'image'
+    type: 'image',
+    file: null
   });
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [urlError, setUrlError] = useState('');
+  const [uploadMethod, setUploadMethod] = useState('url'); // 'url' or 'file'
 
   // Get auth token from localStorage
   const getAuthHeaders = () => {
@@ -105,15 +107,23 @@ const GalleryManagement = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, files } = e.target;
+    
+    if (name === 'file') {
+      setFormData(prev => ({
+        ...prev,
+        file: files[0]
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
 
-    // Clear URL error when user starts typing a new URL
-    if (name === 'url') {
-      setUrlError('');
+      // Clear URL error when user starts typing a new URL
+      if (name === 'url') {
+        setUrlError('');
+      }
     }
   };
 
@@ -122,20 +132,33 @@ const GalleryManagement = () => {
       title: '',
       description: '',
       url: '',
-      type: type
+      type: type,
+      file: null
     });
     setUrlError('');
+    setUploadMethod('url');
     setIsModalOpen(true);
   };
 
   const validateForm = () => {
-    if (formData.type === 'video' && formData.url) {
-      const embedUrl = getYouTubeEmbedUrl(formData.url);
-      if (!embedUrl) {
-        setUrlError('Please enter a valid YouTube URL');
+    if (uploadMethod === 'url') {
+      if (formData.type === 'video' && formData.url) {
+        const embedUrl = getYouTubeEmbedUrl(formData.url);
+        if (!embedUrl) {
+          setUrlError('Please enter a valid YouTube URL');
+          return false;
+        }
+        formData.url = embedUrl;
+      }
+      if (!formData.url) {
+        setUrlError('Please provide a URL');
         return false;
       }
-      formData.url = embedUrl;
+    } else {
+      if (!formData.file) {
+        setUrlError('Please select a file');
+        return false;
+      }
     }
     return true;
   };
@@ -150,30 +173,42 @@ const GalleryManagement = () => {
     setIsLoading(true);
     
     try {
-      console.log('Attempting to add new item:', formData);
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description);
       
-      const token = localStorage.getItem('adminAuth');
-      console.log('Using auth token:', token);
-      
-      const headers = getAuthHeaders();
-      console.log('Request headers:', headers);
-      
-      const endpoint = formData.type === 'event' ? 'events' : `${formData.type}s`;
-      console.log('Making POST request to:', `${API_URL}/api/gallery/${endpoint}`);
-      
-      const response = await fetch(`${API_URL}/api/gallery/${endpoint}`, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-          title: formData.title,
-          description: formData.description,
-          [formData.type === 'video' ? 'videoUrl' : 'imageUrl']: formData.url
-        })
+      if (uploadMethod === 'file') {
+        formDataToSend.append('file', formData.file);
+        console.log('File being sent:', formData.file);
+      } else {
+        // Use correct field name for each type
+        if (formData.type === 'video') {
+          formDataToSend.append('videoUrl', formData.url);
+        } else {
+          // images and events both use imageUrl
+          formDataToSend.append('imageUrl', formData.url);
+        }
+        console.log('URL being sent:', formData.url);
+      }
+
+      console.log('Form data being sent:', {
+        title: formData.title,
+        description: formData.description,
+        uploadMethod,
+        type: formData.type
       });
 
-      console.log('Response status:', response.status);
+      const endpoint = formData.type === 'event' ? 'events' : `${formData.type}s`;
+      const response = await fetch(`${API_URL}/api/gallery/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('adminAuth')}`
+        },
+        body: formDataToSend
+      });
+
       const data = await response.json();
-      console.log('Response data:', data);
+      console.log('Server response:', data);
 
       if (response.ok) {
         setItems(prev => ({
@@ -184,10 +219,10 @@ const GalleryManagement = () => {
           title: "Success",
           description: `${formData.type} added successfully`,
         });
-        setFormData({ title: '', description: '', url: '', type: formData.type });
+        setFormData({ title: '', description: '', url: '', type: formData.type, file: null });
         setIsModalOpen(false);
       } else {
-        console.error('Failed to add item:', data);
+        console.error('Server error response:', data);
         toast({
           title: "Error",
           description: data.message || `Failed to add ${formData.type}`,
@@ -195,10 +230,10 @@ const GalleryManagement = () => {
         });
       }
     } catch (error) {
-      console.error('Error adding item:', error);
+      console.error('Error details:', error);
       toast({
         title: "Error",
-        description: `Failed to add ${formData.type}. Please check the console for details.`,
+        description: `Failed to add ${formData.type}. Please try again.`,
         variant: "destructive",
       });
     } finally {
@@ -255,16 +290,24 @@ const GalleryManagement = () => {
             <CardContent className="p-4">
               {isVideo ? (
                 <div className="relative pt-[56.25%] mb-4">
-                  <iframe
-                    src={item.videoUrl}
-                    className="absolute top-0 left-0 w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                  {item.videoUrl.startsWith('http') ? (
+                    <iframe
+                      src={item.videoUrl}
+                      className="absolute top-0 left-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video
+                      src={`${API_URL}${item.videoUrl}`}
+                      className="absolute top-0 left-0 w-full h-full"
+                      controls
+                    />
+                  )}
                 </div>
               ) : (
                 <img
-                  src={item.imageUrl}
+                  src={item.imageUrl.startsWith('http') ? item.imageUrl : `${API_URL}${item.imageUrl}`}
                   alt={item.title}
                   className="w-full h-48 object-cover mb-4 rounded"
                 />
@@ -357,20 +400,53 @@ const GalleryManagement = () => {
             />
           </div>
           <div>
-            <Label htmlFor="url">
-              {formData.type === 'video' ? 'YouTube URL' : 'Image URL'}
-            </Label>
-            <Input
-              id="url"
-              name="url"
-              value={formData.url}
-              onChange={handleInputChange}
-              required
-            />
-            {urlError && (
-              <p className="text-red-500 text-sm mt-1">{urlError}</p>
-            )}
+            <Label>Upload Method</Label>
+            <div className="flex space-x-4 mt-2">
+              <Button
+                type="button"
+                variant={uploadMethod === 'url' ? 'default' : 'outline'}
+                onClick={() => setUploadMethod('url')}
+              >
+                URL
+              </Button>
+              <Button
+                type="button"
+                variant={uploadMethod === 'file' ? 'default' : 'outline'}
+                onClick={() => setUploadMethod('file')}
+              >
+                File Upload
+              </Button>
+            </div>
           </div>
+          {uploadMethod === 'url' ? (
+            <div>
+              <Label htmlFor="url">
+                {formData.type === 'video' ? 'YouTube URL' : 'Image URL'}
+              </Label>
+              <Input
+                id="url"
+                name="url"
+                value={formData.url}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          ) : (
+            <div>
+              <Label htmlFor="file">File</Label>
+              <Input
+                id="file"
+                name="file"
+                type="file"
+                accept={formData.type === 'video' ? 'video/*' : 'image/*'}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          )}
+          {urlError && (
+            <p className="text-red-500 text-sm mt-1">{urlError}</p>
+          )}
           <div className="flex justify-end space-x-2">
             <Button
               type="button"

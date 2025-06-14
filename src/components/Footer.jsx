@@ -44,13 +44,20 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              {['Home', 'About', 'Services', 'Projects', 'Contact', 'Log In'].map((link) => (
-                <li key={link}>
+              {[
+                { name: 'Home', path: '/' },
+                { name: 'About', path: '/about' },
+                { name: 'Services', path: '/services/website-development' },
+                { name: 'Projects', path: '/projects' },
+                { name: 'Contact', path: '/contact' },
+                { name: 'Log In', path: '/admin/login' }
+              ].map(({ name, path }) => (
+                <li key={name}>
                   <Link
-                    to={link === 'Log In' ? '/admin/login' : `/${link.toLowerCase()}`}
+                    to={path}
                     className="text-gray-300 hover:text-primary-400 transition-colors duration-200"
                   >
-                    {link}
+                    {name}
                   </Link>
                 </li>
               ))}
@@ -62,41 +69,71 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Services</h3>
             <ul className="space-y-2">
               {[
-                'Website Development',
-                'Software Development',
-                'Digital Marketing',
-                'SEO Services',
-                'Ecommerce Solutions'
-              ].map((service) => (
-                <li key={service}>
-                  <a href="#" className="text-gray-300 hover:text-primary-400 transition-colors duration-200">
-                    {service}
-                  </a>
+                { name: 'Website Development', path: '/services/website-development' },
+                { name: 'Software Development', path: '/services/software-development' },
+                { name: 'Digital Marketing', path: '/services/digital-marketing' },
+                { name: 'Telecalling Services', path: '/services/telecalling' },
+                { name: 'Google Business', path: '/services/google-business' }
+              ].map(({ name, path }) => (
+                <li key={name}>
+                  <Link
+                    to={path}
+                    className="text-gray-300 hover:text-primary-400 transition-colors duration-200"
+                  >
+                    {name}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Contact Info */}
-         <div>
-  <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
-  <div className="space-y-3">
-    <div className="flex items-center space-x-3">
-      {/* <Mail className="w-100 h-100 text-primary-400" /> */}
-      <span className="text-gray-300">cloudbookingsolutions@gmail.com</span>
-    </div>
-    <div className="flex items-center space-x-3">
-      {/* <Phone className="w-6 h-6 text-primary-400" /> */}
-      <span className="text-gray-300">
-        Phone 1: +91 8692805267<br />Phone 2: +91 9860302372
-      </span>
-    </div>
-    <div className="flex items-center space-x-3">
-      {/* <MapPin className="w-6 h-6 text-primary-400" /> */}
-      <span className="text-gray-300">Gate No:02, D4 Building, Sakal Nagar, Aundh, Pune-411007</span>
-    </div>
-  </div>
-</div>
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                {/* <Mail className="w-5 h-5 text-primary-400" /> */}
+                <a
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=cloudbookingsolutions@gmail.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-primary-400 transition-colors duration-200"
+                >
+                  cloudbookingsolutions@gmail.com
+                </a>
+
+              </div>
+              <div className="flex items-center space-x-3">
+                {/* <Phone className="w-5 h-5 text-primary-400" /> */}
+                <div className="text-gray-300">
+                  <a 
+                    href="tel:+918692805267" 
+                    className="hover:text-primary-400 transition-colors duration-200"
+                  >
+                    Phone 1: +91 8692805267
+                  </a>
+                  <br />
+                  <a 
+                    href="tel:+919860302372" 
+                    className="hover:text-primary-400 transition-colors duration-200"
+                  >
+                    Phone 2: +91 9860302372
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                {/* <MapPin className="w-5 h-5 text-primary-400" /> */}
+                <a 
+                  href="https://www.google.com/maps/search/?api=1&query=Gate+No:02,+D4+Building,+Sakal+Nagar,+Aundh,+Pune-411007"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-primary-400 transition-colors duration-200"
+                >
+                  Gate No:02, D4 Building, Sakal Nagar, Aundh, Pune-411007
+                </a>
+              </div>
+            </div>
+          </div>
 
         </div>
 

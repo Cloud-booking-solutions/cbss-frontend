@@ -15,7 +15,7 @@ const DigitalMarketing = () => {
           {/* First section - content left, image right */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
-              <h3 className="font-bold text-xl lg:text-2xl">A. Branding</h3>
+            <h3 className="font-bold text-xl lg:text-2xl text-black">A. Branding</h3>
               <p className="mt-5 text-[15px] md:text-[16px] lg:text-[17px] text-gray-800">
                 A branding and digital marketing agency can enable your company to shape an impressive perception with easy recall urging the audience to connect and engage with your brand. As a reputed branding agency in Pune, we always strive to reach the extra mile for powering up your brand value in the market.
               </p>
@@ -30,7 +30,7 @@ const DigitalMarketing = () => {
               </p>
 
               <br />
-              <h3 className="font-bold text-xl lg:text-2xl">B. Social Media Marketing</h3>
+              <h3 className="font-bold text-xl lg:text-2xl text-black">B. Social Media Marketing</h3>
               <p className="mt-5 text-[15px] md:text-[16px] lg:text-[17px] text-gray-800">
                 As a leading social media marketing agency in India, we strive to build a solid competitive position for your online presence on <span className="font-bold">top social media platforms like Instagram, Facebook, Youtube and Linkedin</span>.
               </p>
