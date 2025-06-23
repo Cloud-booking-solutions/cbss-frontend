@@ -50,6 +50,9 @@ const ServicesManagement = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
+  const [uploadMethod, setUploadMethod] = useState('url'); // 'url' or 'file'
+  const [file, setFile] = useState(null);
+  const [urlError, setUrlError] = useState('');
 
   useEffect(() => {
     fetchServices();
@@ -94,7 +97,7 @@ const ServicesManagement = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
     if (name === 'features') {
       // Split features by new line and convert to array of objects
       const featuresArray = value.split('\n')
@@ -107,11 +110,19 @@ const ServicesManagement = () => {
         ...prev,
         [name]: featuresArray
       }));
+    } else if (name === 'file') {
+      setFile(files[0]);
+      setNewService(prev => ({
+        ...prev,
+        image: ''
+      }));
     } else {
       setNewService(prev => ({
         ...prev,
         [name]: value
       }));
+      if (name === 'image') setFile(null);
+      if (name === 'image') setUrlError('');
     }
   };
 
@@ -122,64 +133,105 @@ const ServicesManagement = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Clean and validate the data
-    const cleanService = {
-      title: newService.title.trim(),
-      description: newService.description.trim(),
-      features: newService.features.map(feature => 
-        typeof feature === 'string' 
-          ? { title: feature.trim(), description: '' }
-          : { ...feature, title: feature.title.trim() }
-      ).filter(feature => feature.title), // Remove empty features
-      image: newService.image.trim()
-    };
-
-    // Validate required fields
-    if (!cleanService.title || !cleanService.description) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields (title and description)",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Validate URL
-    const isValidUrl = (url) => {
-      try {
-        new URL(url);
-        return true;
-      } catch {
+  const validateForm = () => {
+    if (uploadMethod === 'url') {
+      if (!newService.image) {
+        setUrlError('Please provide an image URL');
         return false;
       }
-    };
-
-    if (cleanService.image && !isValidUrl(cleanService.image)) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid image URL",
-        variant: "destructive",
-      });
-      return;
+      // Validate URL
+      try {
+        new URL(newService.image);
+      } catch {
+        setUrlError('Please enter a valid image URL');
+        return false;
+      }
+    } else {
+      if (!file) {
+        setUrlError('Please select an image file');
+        return false;
+      }
     }
+    return true;
+  };
 
-    // Debug logging
-    console.log('Submitting service with data:', cleanService);
-    console.log('Auth headers:', getAuthHeaders());
-    
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
     try {
-      const response = await fetch('https://cbss-backend.onrender.com/api/service', {
-        method: 'POST',
-        headers: {
-          ...getAuthHeaders(),
-          'Accept': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(cleanService)
-      });
+      let response;
+      if (uploadMethod === 'file') {
+        const formDataToSend = new FormData();
+        formDataToSend.append('title', newService.title.trim());
+        formDataToSend.append('description', newService.description.trim());
+        formDataToSend.append('category', newService.category);
+        formDataToSend.append('features', JSON.stringify(newService.features));
+        formDataToSend.append('file', file);
+        response = await fetch('https://cbss-backend.onrender.com/api/service', {
+          method: 'POST',
+          headers: {
+            'Authorization': getAuthHeaders()['Authorization']
+          },
+          credentials: 'include',
+          body: formDataToSend
+        });
+      } else {
+        // Clean and validate the data
+        const cleanService = {
+          title: newService.title.trim(),
+          description: newService.description.trim(),
+          features: newService.features.map(feature => 
+            typeof feature === 'string' 
+              ? { title: feature.trim(), description: '' }
+              : { ...feature, title: feature.title.trim() }
+          ).filter(feature => feature.title), // Remove empty features
+          image: newService.image.trim(),
+          category: newService.category
+        };
+
+        // Validate required fields
+        if (!cleanService.title || !cleanService.description) {
+          toast({
+            title: "Error",
+            description: "Please fill in all required fields (title and description)",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Validate URL
+        const isValidUrl = (url) => {
+          try {
+            new URL(url);
+            return true;
+          } catch {
+            return false;
+          }
+        };
+
+        if (cleanService.image && !isValidUrl(cleanService.image)) {
+          toast({
+            title: "Error",
+            description: "Please enter a valid image URL",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Debug logging
+        console.log('Submitting service with data:', cleanService);
+        console.log('Auth headers:', getAuthHeaders());
+        
+        response = await fetch('https://cbss-backend.onrender.com/api/service', {
+          method: 'POST',
+          headers: {
+            ...getAuthHeaders(),
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify(cleanService)
+        });
+      }
 
       console.log('Response status:', response.status);
       console.log('Response headers:', Object.fromEntries(response.headers.entries()));
@@ -227,6 +279,8 @@ const ServicesManagement = () => {
         image: ''
       });
       setIsAddModalOpen(false);
+      setFile(null);
+      setUploadMethod('url');
     } catch (error) {
       console.error('Error adding service:', error);
       console.error('Error details:', {
@@ -360,7 +414,7 @@ const ServicesManagement = () => {
                 {service.image && (
                   <div className="aspect-video relative mb-4">
                     <img
-                      src={service.image}
+                      src={service.image && service.image.startsWith('/uploads/') ? `https://cbss-backend.onrender.com${service.image}` : service.image}
                       alt={service.title}
                       className="absolute inset-0 w-full h-full object-cover rounded-md"
                     />
@@ -387,7 +441,7 @@ const ServicesManagement = () => {
       {/* Add Modal */}
       <Modal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => { setIsAddModalOpen(false); setFile(null); setUploadMethod('url'); }}
         title="Add New Service"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -425,16 +479,74 @@ const ServicesManagement = () => {
             />
           </div>
           <div>
-            <Label htmlFor="image">Image URL</Label>
-            <Input
-              id="image"
-              name="image"
-              value={newService.image}
-              onChange={handleInputChange}
-              required
-            />
+            <Label>Upload Method</Label>
+            <div className="flex space-x-4 mt-2">
+              <Button
+                type="button"
+                variant={uploadMethod === 'url' ? 'default' : 'outline'}
+                onClick={() => { setUploadMethod('url'); setFile(null); }}
+              >
+                URL
+              </Button>
+              <Button
+                type="button"
+                variant={uploadMethod === 'file' ? 'default' : 'outline'}
+                onClick={() => { setUploadMethod('file'); setNewService(prev => ({ ...prev, image: '' })); }}
+              >
+                File Upload
+              </Button>
+            </div>
           </div>
-          <Button type="submit" className="w-full">Add Service</Button>
+          {uploadMethod === 'url' ? (
+            <div>
+              <Label htmlFor="image">Image URL</Label>
+              <Input
+                id="image"
+                name="image"
+                value={newService.image}
+                onChange={handleInputChange}
+                placeholder="Enter image URL"
+                required={uploadMethod === 'url'}
+              />
+              {newService.image && (
+                <div className="mt-2">
+                  <img
+                    src={newService.image}
+                    alt="Preview"
+                    className="w-20 h-20 object-cover rounded"
+                    onError={e => (e.target.style.display = 'none')}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <Label htmlFor="file">Image File</Label>
+              <Input
+                id="file"
+                name="file"
+                type="file"
+                accept="image/*"
+                onChange={handleInputChange}
+                required={uploadMethod === 'file'}
+              />
+              {file && (
+                <div className="mt-2">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="Preview"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          {urlError && (
+            <p className="text-red-500 text-sm mt-1">{urlError}</p>
+          )}
+          <Button type="submit" className="w-full">
+            Add Service
+          </Button>
         </form>
       </Modal>
 

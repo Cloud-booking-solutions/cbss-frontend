@@ -21,6 +21,9 @@ const BlogManagement = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [newItem, setNewItem] = useState({});
+  const [uploadMethod, setUploadMethod] = useState('url'); // 'url' or 'file'
+  const [file, setFile] = useState(null);
+  const [urlError, setUrlError] = useState('');
 
   // Load blogs when component mounts
   useEffect(() => {
@@ -40,8 +43,67 @@ const BlogManagement = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === 'file') {
+      setFile(files[0]);
+      setNewItem(prev => ({ ...prev, image: '' }));
+    } else {
+      setNewItem(prev => ({ ...prev, [name]: value }));
+      if (name === 'image') setFile(null);
+      if (name === 'image') setUrlError('');
+    }
+  };
+
+  const validateForm = () => {
+    if (uploadMethod === 'url') {
+      if (!newItem.image) {
+        setUrlError('Please provide an image URL');
+        return false;
+      }
+      try {
+        new URL(newItem.image);
+      } catch {
+        setUrlError('Please enter a valid image URL');
+        return false;
+      }
+    } else {
+      if (!file) {
+        setUrlError('Please select an image file');
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleAdd = async () => {
     try {
+      if (!validateForm()) return;
+      let response;
+      if (uploadMethod === 'file') {
+        const formDataToSend = new FormData();
+        formDataToSend.append('title', newItem.title?.trim() || '');
+        formDataToSend.append('excerpt', newItem.excerpt?.trim() || '');
+        formDataToSend.append('content', newItem.content?.trim() || '');
+        formDataToSend.append('file', file);
+        formDataToSend.append('status', 'Draft');
+        response = await fetch('https://cbss-backend.onrender.com/api/blog', {
+          method: 'POST',
+          headers: {
+            'Authorization': localStorage.getItem('adminAuth') ? `Bearer ${localStorage.getItem('adminAuth')}` : ''
+          },
+          body: formDataToSend
+        });
+        if (!response.ok) throw new Error('Failed to add article');
+        const data = await response.json();
+        setBlogs(prevBlogs => [...prevBlogs, data]);
+        setIsAddModalOpen(false);
+        setNewItem({});
+        setFile(null);
+        setUploadMethod('url');
+        toast({ title: 'Success', description: 'Article added successfully!' });
+        return;
+      }
       if (!newItem.title?.trim() || !newItem.excerpt?.trim() || !newItem.image?.trim()) {
         toast({ 
           title: 'Error', 
@@ -50,14 +112,12 @@ const BlogManagement = () => {
         });
         return;
       }
-
       // Validate and possibly transform image URL
       let imageUrl = newItem.image.trim();
       try {
         const url = new URL(imageUrl);
-        // If it's an iStock photo, replace with a placeholder
         if (url.hostname.includes('istockphoto.com')) {
-          imageUrl = 'https://picsum.photos/800/600'; // Use a free placeholder image instead
+          imageUrl = 'https://picsum.photos/800/600';
         }
       } catch (e) {
         toast({ 
@@ -67,7 +127,6 @@ const BlogManagement = () => {
         });
         return;
       }
-
       const blogData = {
         title: newItem.title.trim(),
         excerpt: newItem.excerpt.trim(),
@@ -75,19 +134,14 @@ const BlogManagement = () => {
         image: imageUrl,
         status: 'Draft'
       };
-
-      console.log('Submitting blog data:', blogData);
-      const response = await createBlog(blogData);
-      console.log('Blog created:', response);
-      
+      response = await createBlog(blogData);
       if (response) {
         setBlogs(prevBlogs => [...prevBlogs, response]);
         setIsAddModalOpen(false);
         setNewItem({});
-        toast({ 
-          title: 'Success', 
-          description: 'Article added successfully!' 
-        });
+        setFile(null);
+        setUploadMethod('url');
+        toast({ title: 'Success', description: 'Article added successfully!' });
       }
     } catch (error) {
       console.error('Error adding blog:', error);
@@ -236,58 +290,107 @@ const BlogManagement = () => {
         {/* Add Modal */}
         <Modal
           isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
+          onClose={() => { setIsAddModalOpen(false); setFile(null); setUploadMethod('url'); }}
           title="Add New Article"
         >
           <form onSubmit={(e) => { e.preventDefault(); handleAdd(); }} className="space-y-4">
             <div>
               <Label htmlFor="title">Title *</Label>
               <Input
-                id="title"
-                value={newItem.title || ''}
-                onChange={(e) => setNewItem({...newItem, title: e.target.value})}
-                placeholder="Enter article title"
-              />
+  id="title"
+  name="title"
+  value={newItem.title || ''}
+  onChange={handleInputChange}
+  placeholder="Enter article title"
+/>
             </div>
             <div>
               <Label htmlFor="excerpt">Excerpt *</Label>
               <Textarea
-                id="excerpt"
-                value={newItem.excerpt || ''}
-                onChange={(e) => setNewItem({...newItem, excerpt: e.target.value})}
-                placeholder="Brief description of the article"
-              />
+  id="excerpt"
+  name="excerpt"
+  value={newItem.excerpt || ''}
+  onChange={handleInputChange}
+  placeholder="Brief description of the article"
+/>
+
             </div>
             <div>
               <Label htmlFor="content">Content</Label>
               <Textarea
-                id="content"
-                value={newItem.content || ''}
-                onChange={(e) => setNewItem({...newItem, content: e.target.value})}
-                placeholder="Full article content"
-                rows={6}
-              />
+  id="content"
+  name="content"
+  value={newItem.content || ''}
+  onChange={handleInputChange}
+  placeholder="Full article content"
+  rows={6}
+/>
             </div>
             <div>
-              <Label htmlFor="image">Image URL *</Label>
-              <Input
-                id="image"
-                type="text"
-                value={newItem.image || ''}
-                onChange={(e) => setNewItem({...newItem, image: e.target.value})}
-                placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
-              />
-              {newItem.image && (
-                <div className="mt-2">
-                  <img 
-                    src={newItem.image} 
-                    alt="Preview" 
-                    className="w-20 h-20 object-cover rounded"
-                    onError={(e) => e.target.style.display = 'none'}
-                  />
-                </div>
-              )}
+              <Label>Upload Method</Label>
+              <div className="flex space-x-4 mt-2">
+                <Button
+                  type="button"
+                  variant={uploadMethod === 'url' ? 'default' : 'outline'}
+                  onClick={() => { setUploadMethod('url'); setFile(null); }}
+                >
+                  URL
+                </Button>
+                <Button
+                  type="button"
+                  variant={uploadMethod === 'file' ? 'default' : 'outline'}
+                  onClick={() => { setUploadMethod('file'); setNewItem(prev => ({ ...prev, image: '' })); }}
+                >
+                  File Upload
+                </Button>
+              </div>
             </div>
+            {uploadMethod === 'url' ? (
+              <div>
+                <Label htmlFor="image">Image URL *</Label>
+                <Input
+  id="image"
+  name="image"
+  type="text"
+  value={newItem.image || ''}
+  onChange={handleInputChange}
+  placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
+/>
+                {newItem.image && (
+                  <div className="mt-2">
+                    <img 
+                      src={newItem.image} 
+                      alt="Preview" 
+                      className="w-20 h-20 object-cover rounded"
+                      onError={e => (e.target.style.display = 'none')}
+                    />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>
+                <Label htmlFor="file">Image File</Label>
+                <Input
+  id="file"
+  name="file"
+  type="file"
+  accept="image/*"
+  onChange={handleInputChange}
+/>
+                {file && (
+                  <div className="mt-2">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            {urlError && (
+              <p className="text-red-500 text-sm mt-1">{urlError}</p>
+            )}
             <Button type="submit" className="w-full">
               Add Article
             </Button>

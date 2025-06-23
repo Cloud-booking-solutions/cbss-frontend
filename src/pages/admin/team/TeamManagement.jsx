@@ -31,6 +31,9 @@ const TeamManagement = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [activeTab, setActiveTab] = useState('expert');
+  const [uploadMethod, setUploadMethod] = useState('url'); // 'url' or 'file'
+  const [file, setFile] = useState(null);
+  const [urlError, setUrlError] = useState('');
 
   useEffect(() => {
     fetchTeamMembers();
@@ -71,50 +74,87 @@ const TeamManagement = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewMember(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, files } = e.target;
+    if (name === 'file') {
+      setFile(files[0]);
+      setNewMember(prev => ({ ...prev, image: '' }));
+    } else {
+      setNewMember(prev => ({ ...prev, [name]: value }));
+      if (name === 'image') setFile(null);
+      if (name === 'image') setUrlError('');
+    }
+  };
+
+  const validateForm = () => {
+    if (uploadMethod === 'url') {
+      if (!newMember.image) {
+        setUrlError('Please provide an image URL');
+        return false;
+      }
+      try {
+        new URL(newMember.image);
+      } catch {
+        setUrlError('Please enter a valid image URL');
+        return false;
+      }
+    } else {
+      if (!file) {
+        setUrlError('Please select an image file');
+        return false;
+      }
+    }
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    if (!validateForm()) return;
     try {
-      const memberData = {
-        ...newMember,
-        type: activeTab // Use the active tab as the member type
-      };
-
-      const response = await fetch('https://cbss-backend.onrender.com/api/team', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        credentials: 'include',
-        body: JSON.stringify(memberData)
-      });
-
+      let response;
+      if (uploadMethod === 'file') {
+        const formDataToSend = new FormData();
+        formDataToSend.append('name', newMember.name);
+        formDataToSend.append('role', newMember.role);
+        formDataToSend.append('type', activeTab);
+        formDataToSend.append('file', file);
+        response = await fetch('https://cbss-backend.onrender.com/api/team', {
+          method: 'POST',
+          headers: {
+            'Authorization': getAuthHeaders()['Authorization']
+          },
+          credentials: 'include',
+          body: formDataToSend
+        });
+      } else {
+        const memberData = {
+          ...newMember,
+          type: activeTab
+        };
+        response = await fetch('https://cbss-backend.onrender.com/api/team', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          credentials: 'include',
+          body: JSON.stringify(memberData)
+        });
+      }
       if (response.ok) {
         toast({
-          title: "Success",
-          description: "Team member added successfully",
+          title: 'Success',
+          description: 'Team member added successfully',
         });
         setIsAddModalOpen(false);
-        setNewMember({
-          name: '',
-          role: '',
-          image: '',
-          type: activeTab
-        });
+        setNewMember({ name: '', role: '', image: '', type: activeTab });
+        setFile(null);
+        setUploadMethod('url');
         fetchTeamMembers();
       } else {
         throw new Error('Failed to add team member');
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to add team member",
-        variant: "destructive",
+        title: 'Error',
+        description: error.message || 'Failed to add team member',
+        variant: 'destructive',
       });
     }
   };
@@ -265,7 +305,7 @@ const TeamManagement = () => {
       {/* Add Modal */}
       <Modal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => { setIsAddModalOpen(false); setFile(null); setUploadMethod('url'); }}
         title={`Add ${activeTab === 'expert' ? 'Expert' : 'Intern'} Team Member`}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -290,15 +330,71 @@ const TeamManagement = () => {
             />
           </div>
           <div>
-            <Label htmlFor="image">Image URL</Label>
-            <Input
-              id="image"
-              name="image"
-              value={newMember.image}
-              onChange={handleInputChange}
-              required
-            />
+            <Label>Upload Method</Label>
+            <div className="flex space-x-4 mt-2">
+              <Button
+                type="button"
+                variant={uploadMethod === 'url' ? 'default' : 'outline'}
+                onClick={() => { setUploadMethod('url'); setFile(null); }}
+              >
+                URL
+              </Button>
+              <Button
+                type="button"
+                variant={uploadMethod === 'file' ? 'default' : 'outline'}
+                onClick={() => { setUploadMethod('file'); setNewMember(prev => ({ ...prev, image: '' })); }}
+              >
+                File Upload
+              </Button>
+            </div>
           </div>
+          {uploadMethod === 'url' ? (
+            <div>
+              <Label htmlFor="image">Image URL</Label>
+              <Input
+                id="image"
+                name="image"
+                value={newMember.image}
+                onChange={handleInputChange}
+                placeholder="Enter image URL"
+                required={uploadMethod === 'url'}
+              />
+              {newMember.image && (
+                <div className="mt-2">
+                  <img
+                    src={newMember.image}
+                    alt="Preview"
+                    className="w-20 h-20 object-cover rounded"
+                    onError={e => (e.target.style.display = 'none')}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <Label htmlFor="file">Image File</Label>
+              <Input
+                id="file"
+                name="file"
+                type="file"
+                accept="image/*"
+                onChange={handleInputChange}
+                required={uploadMethod === 'file'}
+              />
+              {file && (
+                <div className="mt-2">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="Preview"
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          {urlError && (
+            <p className="text-red-500 text-sm mt-1">{urlError}</p>
+          )}
           <Button type="submit" className="w-full">
             Add {activeTab === 'expert' ? 'Expert' : 'Intern'}
           </Button>
@@ -371,7 +467,7 @@ const TeamMemberCard = ({ member, onEdit, onDelete }) => (
       {member.image && (
         <div className="aspect-square relative mb-4">
           <img
-            src={member.image}
+            src={member.image && member.image.startsWith('/uploads/') ? `https://cbss-backend.onrender.com${member.image}` : member.image}
             alt={member.name}
             className="absolute inset-0 w-full h-full object-cover rounded-full"
           />

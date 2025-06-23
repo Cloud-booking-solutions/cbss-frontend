@@ -61,7 +61,7 @@
 //   <Card className="overflow-hidden transition-transform duration-300 hover:scale-105 bg-white shadow-md group">
 //     <div className="aspect-square relative">
 //       <img
-//         src={member.image}
+//         src={member.image && member.image.startsWith('/uploads/') ? `https://cbss-backend.onrender.com${member.image}` : member.image}
 //         alt={member.name}
 //         className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
 //       />

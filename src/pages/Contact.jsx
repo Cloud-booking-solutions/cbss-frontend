@@ -1,8 +1,50 @@
-
 import Layout from '../components/Layout';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { useState } from 'react';
 
 const Contact = () => {
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!form.firstName.trim()) newErrors.firstName = 'First name is required';
+    if (!form.lastName.trim()) newErrors.lastName = 'Last name is required';
+    if (!form.email.trim()) newErrors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Invalid email address';
+    if (!form.phone.trim()) newErrors.phone = 'Phone is required';
+    else if (!/^\d{10,}$/.test(form.phone.replace(/\D/g, ''))) newErrors.phone = 'Invalid phone number';
+    if (!form.subject.trim()) newErrors.subject = 'Subject is required';
+    if (!form.message.trim()) newErrors.message = 'Message is required';
+    return newErrors;
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: undefined });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    setSubmitted(true);
+    if (Object.keys(validationErrors).length === 0) {
+      // Submit form logic here (e.g., API call)
+      alert('Message sent!');
+      setForm({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' });
+      setSubmitted(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="section-padding bg-gray-50">
@@ -25,8 +67,18 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">Phone</h3>
-                  <p className="text-gray-600">+91 8692805267</p>
-                  <p className="text-gray-600">+91 9860302372</p>
+                  <a 
+                    href="tel:+918692805267" 
+                    className="text-gray-600 hover:text-primary-600 transition-colors block"
+                  >
+                    +91 8692805267
+                  </a>
+                  <a 
+                    href="tel:+919860302372" 
+                    className="text-gray-600 hover:text-primary-600 transition-colors block"
+                  >
+                    +91 9860302372
+                  </a>
                 </div>
               </div>
 
@@ -36,7 +88,14 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">Email</h3>
-                  <p className="text-gray-600">cloudbookingsolutions@gmail.com</p>
+                  <a 
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=cloudbookingsolutions@gmail.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-primary-600 transition-colors"
+                  >
+                    cloudbookingsolutions@gmail.com
+                  </a>
                 </div>
               </div>
 
@@ -46,8 +105,14 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">Address</h3>
-                  <p className="text-gray-600">Gate No:02, D4 Building, Sakal Nagar, Aundh, Pune-411007</p>
-                  
+                  <a 
+                    href="https://www.google.com/maps/search/?api=1&query=Gate+No:02,+D4+Building,+Sakal+Nagar,+Aundh,+Pune-411007"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-primary-600 transition-colors"
+                  >
+                    Gate No:02, D4 Building, Sakal Nagar, Aundh, Pune-411007
+                  </a>
                 </div>
               </div>
 
@@ -66,23 +131,31 @@ const Contact = () => {
             {/* Contact Form */}
             <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit} noValidate>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                      name="firstName"
+                      value={form.firstName}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all`}
                       placeholder=""
                     />
+                    {submitted && errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                      name="lastName"
+                      value={form.lastName}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all`}
                       placeholder=""
                     />
+                    {submitted && errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
                   </div>
                 </div>
 
@@ -90,36 +163,52 @@ const Contact = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                   <input
                     type="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all`}
                     placeholder=""
                   />
+                  {submitted && errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all`}
                     placeholder=""
                   />
+                  {submitted && errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                    name="subject"
+                    value={form.subject}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border ${errors.subject ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all`}
                     placeholder=""
                   />
+                  {submitted && errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject}</p>}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
                   <textarea
                     rows="5"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all`}
                     placeholder=""
                   ></textarea>
+                  {submitted && errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
                 </div>
 
                 <button

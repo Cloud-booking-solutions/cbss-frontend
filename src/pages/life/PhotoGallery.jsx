@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
+import Modal from '../../components/ui/modal';
 
 const API_URL = 'https://cbss-backend.onrender.com';
 
@@ -7,6 +8,7 @@ const PhotoGallery = () => {
   const [photos, setPhotos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -27,6 +29,10 @@ const PhotoGallery = () => {
 
     fetchPhotos();
   }, []);
+
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
+  };
 
   return (
     <Layout>
@@ -58,10 +64,11 @@ const PhotoGallery = () => {
                 <div
                   key={photo._id}
                   className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-2 overflow-hidden group"
+                  onClick={() => handleImageClick(photo)}
                 >
                   <div className="aspect-square relative">
                     <img
-                      src={photo.imageUrl}
+                      src={photo.imageUrl.startsWith('http') ? photo.imageUrl : `${API_URL}${photo.imageUrl}`}
                       alt={photo.title}
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -76,6 +83,20 @@ const PhotoGallery = () => {
           )}
         </div>
       </div>
+
+      {selectedImage && (
+        <Modal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)}>
+          <div className="p-4">
+            <img
+              src={selectedImage.imageUrl.startsWith('http') ? selectedImage.imageUrl : `${API_URL}${selectedImage.imageUrl}`}
+              alt={selectedImage.title}
+              className="w-full h-auto"
+            />
+            <h3 className="text-xl font-semibold mt-4">{selectedImage.title}</h3>
+            <p className="text-gray-600 mt-2">{selectedImage.description}</p>
+          </div>
+        </Modal>
+      )}
     </Layout>
   );
 };

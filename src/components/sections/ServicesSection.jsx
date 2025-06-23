@@ -43,7 +43,7 @@ const ServicesSection = () => {
               {service.image && (
                 <div className="aspect-video relative overflow-hidden">
                   <img
-                    src={service.image}
+                    src={service.image && service.image.startsWith('/uploads/') ? `https://cbss-backend.onrender.com${service.image}` : service.image}
                     alt={service.title}
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />

@@ -74,7 +74,7 @@ const Blogs = () => {
               >
                 <div className="aspect-video bg-gray-200 flex items-center justify-center overflow-hidden">
                   <img
-                    src={blog.image}
+                    src={blog.image && blog.image.startsWith('/uploads/') ? `https://cbss-backend.onrender.com${blog.image}` : blog.image}
                     alt={blog.title}
                     className="object-cover w-full h-full"
                   />

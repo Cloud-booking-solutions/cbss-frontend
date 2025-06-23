@@ -33,14 +33,14 @@ const CloudLearning = () => {
           title: "MS Office Course",
           description: "As an MS Office course, Cloud Learning role is to provide comprehensive training on Microsoft Office applications, a suite of productivity tools widely used in various professional settings. Microsoft Office includes applications such as Word, Excel, PowerPoint, Outlook, and more. Our course aims to equip students with the necessary skills to effectively use these applications for various tasks, enhancing their productivity and efficiency.",
         },
-        {
-          title: "Typing Course",
-          description: "As a typing course, Cloud Learning role is to help students improve their typing skills, speed, and accuracy on a computer keyboard. Typing is an essential skill in the digital age, and Our course aims to make students proficient in touch typing, where they can type without looking at the keyboard.",
-        },
-        {
-          title: "Data Entry Operating Course",
-          description: "As a Data Entry Operating course, Cloud Learning role is to train individuals in the essential skills and techniques required to efficiently and accurately enter data into computer systems and databases. Data entry operators play a crucial role in various industries, ensuring that information is correctly recorded and organized for further analysis and decision-making.",
-        },
+        // {
+        //   title: "Typing Course",
+        //   description: "As a typing course, Cloud Learning role is to help students improve their typing skills, speed, and accuracy on a computer keyboard. Typing is an essential skill in the digital age, and Our course aims to make students proficient in touch typing, where they can type without looking at the keyboard.",
+        // },
+        // {
+        //   title: "Data Entry Operating Course",
+        //   description: "As a Data Entry Operating course, Cloud Learning role is to train individuals in the essential skills and techniques required to efficiently and accurately enter data into computer systems and databases. Data entry operators play a crucial role in various industries, ensuring that information is correctly recorded and organized for further analysis and decision-making.",
+        // },
         {
           title: "Website Development",
           description: "As a Website Development course, Cloud Learning role is to equip students with the knowledge and skills necessary to build fully functional and interactive websites. Website development involves working with various programming languages, frameworks, and technologies to create websites that meet specific design and functionality requirements. Our course aims to provide students with a comprehensive understanding of both front-end and back-end web development, enabling them to create dynamic and user-friendly websites.",
@@ -50,10 +50,10 @@ const CloudLearning = () => {
     {
       category: "Technologies",
       courses: [
-        {
-          title: "SAP",
-          description: "As a SAP (Systems, Applications, and Products) course, Cloud Learning role is to provide students with a comprehensive understanding of SAP software and its applications in business and enterprise settings. SAP is a leading provider of business software solutions used by organizations to manage various aspects of their operations, such as finance, human resources, supply chain, customer relationship management (CRM), and more. Our course aims to equip students with the skills and knowledge needed to implement, configure, and work with SAP systems effectively.",
-        },
+        // {
+        //   title: "SAP",
+        //   description: "As a SAP (Systems, Applications, and Products) course, Cloud Learning role is to provide students with a comprehensive understanding of SAP software and its applications in business and enterprise settings. SAP is a leading provider of business software solutions used by organizations to manage various aspects of their operations, such as finance, human resources, supply chain, customer relationship management (CRM), and more. Our course aims to equip students with the skills and knowledge needed to implement, configure, and work with SAP systems effectively.",
+        // },
         {
           title: "Software Testing Course",
           description: "As a Software Testing course, Cloud learning role is to train students in the principles, techniques, and methodologies of software testing. Software testing is a critical phase in the software development lifecycle, ensuring that the software meets quality standards, functions as intended, and is free from defects. Our course aims to equip students with the skills necessary to identify and report issues in software products effectively.",

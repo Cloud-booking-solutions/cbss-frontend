@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from '../../components/Layout';
 
 const CareerOptions = () => {
   const [careerOptions, setCareerOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCareerOptions();
@@ -96,7 +97,7 @@ const CareerOptions = () => {
                 </div>
 
                 <Link
-                  to="/contact"
+                  to="/career/apply"
                   className="inline-block bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-6 rounded-md transition duration-300"
                 >
                   Apply Now

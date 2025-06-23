@@ -4,14 +4,9 @@ import { Link } from 'react-router-dom';
 const OurInnovativeSection = () => {
   const projects = [
     { id: 1, name: "SPMM", link: "https://spmmtalegaon.in/", image: "https://cloudbookingsolutions.com/img/project/new/spmm.jpg" },
-    { id: 2, name: "Aarvi Event", link: "https://digi-cloud-menu.click/Aarvievent/", image: "https://cloudbookingsolutions.com/img/project/new/aarvievent.jpg" },
     { id: 3, name: "Sai-Malhar Caterers", link: "https://saimalharcaterers.com/", image: "https://cloudbookingsolutions.com/img/project/new/saimalhar.jpg" },
-    { id: 4, name: "Rudra Estate", link: "https://www.rudraestate.in/", image: "https://cloudbookingsolutions.com/img/project/new/rudra.jpg" },
-    { id: 5, name: "Square 7 Architects", link: "https://square7architects.com/", image: "https://cloudbookingsolutions.com/img/project/new/squarre7.jpg" },
     { id: 6, name: "Bansode Civil Engineer", link: "https://bansodecivilengineer.co.in/", image: "https://cloudbookingsolutions.com/img/project/new/bansode.jpg" },
-    { id: 7, name: "JJ Event", link: "https://jjevent.co.in/", image: "https://cloudbookingsolutions.com/img/project/new/jjevent.jpg" },
     { id: 8, name: "APure Joy", link: "https://apurejoy.com/", image: "https://cloudbookingsolutions.com/img/project/new/apurejoy.jpg" },
-    { id: 9, name: "Chetak Tours & Travels", link: "https://chetaktoursandtravels.in/", image: "https://cloudbookingsolutions.com/img/project/new/chetak.jpg" },
   ];
 
   return (
