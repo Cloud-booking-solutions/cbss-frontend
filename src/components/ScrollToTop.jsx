@@ -7,11 +7,11 @@ const ScrollToTop = () => {
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: 'auto'
+      behavior: 'smooth'
     });
   }, [pathname]);
 
   return null;
 };
 
-export default ScrollToTop; 
+export default ScrollToTop;
