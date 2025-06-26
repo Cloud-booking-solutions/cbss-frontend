@@ -210,4 +210,13 @@ export const deleteService = async (id) => {
   }
 };
 
+export const sendContactMessage = async (contactData) => {
+  try {
+    const response = await api.post('/contact', contactData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { msg: 'Server error' };
+  }
+};
+
 export default api;

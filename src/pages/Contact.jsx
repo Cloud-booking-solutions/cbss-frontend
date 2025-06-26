@@ -1,6 +1,7 @@
 import Layout from '../components/Layout';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 import { useState } from 'react';
+import { sendContactMessage } from '../utils/api';
 
 const Contact = () => {
   const [form, setForm] = useState({
@@ -17,7 +18,9 @@ const Contact = () => {
   const validate = () => {
     const newErrors = {};
     if (!form.firstName.trim()) newErrors.firstName = 'First name is required';
+    else if (!/^[A-Za-z]+$/.test(form.firstName.trim())) newErrors.firstName = 'First name must contain only letters';
     if (!form.lastName.trim()) newErrors.lastName = 'Last name is required';
+    else if (!/^[A-Za-z]+$/.test(form.lastName.trim())) newErrors.lastName = 'Last name must contain only letters';
     if (!form.email.trim()) newErrors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Invalid email address';
     if (!form.phone.trim()) newErrors.phone = 'Phone is required';
@@ -32,16 +35,20 @@ const Contact = () => {
     setErrors({ ...errors, [e.target.name]: undefined });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
     setSubmitted(true);
     if (Object.keys(validationErrors).length === 0) {
-      // Submit form logic here (e.g., API call)
-      alert('Message sent!');
-      setForm({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' });
-      setSubmitted(false);
+      try {
+        await sendContactMessage(form);
+        alert('Message sent!');
+        setForm({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' });
+        setSubmitted(false);
+      } catch (error) {
+        alert(error.message || 'Failed to send message.');
+      }
     }
   };
 

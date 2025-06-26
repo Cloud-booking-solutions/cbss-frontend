@@ -26,7 +26,7 @@ const ServicesSection = () => {
 
   return (
     <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 lg:pl-32">
         <div className="text-center mb-12">
         <h2 className="text-3xl font-bold mb-4 text-black">Our Services</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
@@ -34,18 +34,18 @@ const ServicesSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
           {services.map((service) => (
             <Card 
               key={service._id} 
-              className="group hover:shadow-lg transition-shadow duration-300"
+              className="group hover:shadow-lg transition-shadow duration-300 p-5 md:p-6 lg:p-7 w-full mx-auto"
             >
               {service.image && (
-                <div className="aspect-video relative overflow-hidden">
+                <div className="aspect-video relative overflow-hidden rounded-md">
                   <img
                     src={service.image && service.image.startsWith('/uploads/') ? `https://cbss-backend.onrender.com${service.image}` : service.image}
                     alt={service.title}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 rounded-md"
                   />
                 </div>
               )}
@@ -69,8 +69,8 @@ const ServicesSection = () => {
     variant="link" 
     className="mt-4 p-0 h-auto font-semibold text-primary hover:text-primary/80 flex items-center gap-2"
   >
-    Learn More
-    <ArrowRight className="w-4 h-4" />
+    
+    
   </Button>
 </Link>
 

@@ -21,6 +21,7 @@ const CareerApplication = () => {
   const validate = () => {
     const newErrors = {};
     if (!form.name.trim()) newErrors.name = 'Name is required';
+    else if (!/^[A-Za-z ]+$/.test(form.name.trim())) newErrors.name = 'Name must contain only letters';
     if (!form.mobile.trim()) newErrors.mobile = 'Mobile number is required';
     else if (!/^\d{10,}$/.test(form.mobile.replace(/\D/g, ''))) newErrors.mobile = 'Invalid mobile number';
     if (!form.email.trim()) newErrors.email = 'Email is required';
@@ -136,26 +137,32 @@ const CareerApplication = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Qualification</label>
-            <input
-              type="text"
+            <select
               name="qualification"
               value={form.qualification}
               onChange={handleChange}
               className={`w-full px-4 py-3 border ${errors.qualification ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all`}
-              placeholder=""
-            />
+            >
+              <option value="">Select qualification</option>
+              <option value="Graduate">Graduate</option>
+              <option value="Post Graduate">Post Graduate</option>
+            </select>
             {submitted && errors.qualification && <p className="text-red-500 text-xs mt-1">{errors.qualification}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Experience</label>
-            <input
-              type="text"
+            <select
               name="experience"
               value={form.experience}
               onChange={handleChange}
               className={`w-full px-4 py-3 border ${errors.experience ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all`}
-              placeholder=""
-            />
+            >
+              <option value="">Select experience</option>
+              <option value="0-2 years">0-2 years</option>
+              <option value="2-4 years">2-4 years</option>
+              <option value="4-6 years">4-6 years</option>
+              <option value="6+ years">6+ years</option>
+            </select>
             {submitted && errors.experience && <p className="text-red-500 text-xs mt-1">{errors.experience}</p>}
           </div>
           <div>

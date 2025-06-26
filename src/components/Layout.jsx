@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from './Navbar';
 import SocialSidebar from './SocialSidebar';
@@ -11,10 +10,12 @@ const Layout = ({ children }) => {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
       <Navbar />
       <SocialSidebar />
-      <main className="pt-16">
+      <main className="pt-16 ml-8 sm:ml-0">
         {children}
       </main>
-      <Footer />
+      <div className="-ml-8 sm:ml-0">
+        <Footer />
+      </div>
     </div>
   );
 };
